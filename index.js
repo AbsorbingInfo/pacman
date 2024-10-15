@@ -69,6 +69,7 @@ const keys = {
 		pressed: false,
 	},
 };
+let lastPressedKey = '';
 const boundaryBlocks = [];
 layout.forEach((row, rowIdx) => {
 	row.forEach((column, columnIdx) => {
@@ -91,13 +92,13 @@ function animate() {
 	});
 	player.velocity.x = 0;
 	player.velocity.y = 0;
-	if (keys.w.pressed) {
+	if (keys.w.pressed && lastPressedKey === 'w') {
 		player.velocity.y = -5;
-	} else if (keys.a.pressed) {
+	} else if (keys.a.pressed && lastPressedKey === 'a') {
 		player.velocity.x = -5;
-	} else if (keys.s.pressed) {
+	} else if (keys.s.pressed && lastPressedKey === 's') {
 		player.velocity.y = 5;
-	} else if (keys.d.pressed) {
+	} else if (keys.d.pressed && lastPressedKey === 'd') {
 		player.velocity.x = 5;
 	}
 	player.update();
@@ -107,15 +108,19 @@ addEventListener('keydown', ({ key }) => {
 	switch (key) {
 		case 'w':
 			keys.w.pressed = true;
+			lastPressedKey = 'w';
 			break;
 		case 'a':
 			keys.a.pressed = true;
+			lastPressedKey = 'a';
 			break;
 		case 's':
 			keys.s.pressed = true;
+			lastPressedKey = 's';
 			break;
 		case 'd':
 			keys.d.pressed = true;
+			lastPressedKey = 'd';
 			break;
 	}
 });
