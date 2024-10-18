@@ -17,6 +17,7 @@ class Boundary {
 	}
 }
 class Player {
+	static radius = 15;
 	constructor({ position, velocity }) {
 		this.position = position;
 		this.velocity = velocity;
@@ -37,11 +38,13 @@ class Player {
 }
 
 const layout = [
-	[1, 1, 1, 1, 1, 1],
-	[1, 0, 0, 0, 0, 1],
-	[1, 0, 1, 1, 0, 1],
-	[1, 0, 0, 0, 0, 1],
-	[1, 1, 1, 1, 1, 1],
+	[1, 1, 1, 1, 1, 1, 1],
+	[1, 0, 0, 0, 0, 0, 1],
+	[1, 0, 1, 0, 1, 0, 1],
+	[1, 0, 0, 0, 0, 0, 1],
+	[1, 0, 1, 0, 1, 0, 1],
+	[1, 0, 0, 0, 0, 0, 1],
+	[1, 1, 1, 1, 1, 1, 1],
 ];
 
 const player = new Player({
@@ -84,26 +87,121 @@ layout.forEach((row, rowIdx) => {
 	});
 });
 
+function isColliding(circle, boundaryBlock) {
+	return (
+		circle.position.x + circle.radius + circle.velocity.x >=
+			boundaryBlock.position.x &&
+		circle.position.x - circle.radius + circle.velocity.x <=
+			boundaryBlock.position.x + boundaryBlock.width &&
+		circle.position.y + circle.radius + circle.velocity.y >=
+			boundaryBlock.position.y &&
+		circle.position.y - circle.radius + circle.velocity.y <=
+			boundaryBlock.position.y + boundaryBlock.height
+	);
+}
+
 function animate() {
 	requestAnimationFrame(animate);
 	c.clearRect(0, 0, canvas.width, canvas.height);
+	if (keys.w.pressed && lastPressedKey === 'w') {
+		for (let i = 0; i < boundaryBlocks.length; i++) {
+			const boundaryBlock = boundaryBlocks[i];
+			if (
+				isColliding(
+					{
+						...player,
+						velocity: {
+							x: 0,
+							y: -5,
+						},
+					},
+					boundaryBlock,
+				)
+			) {
+				player.velocity.y = 0;
+				break;
+			} else {
+				player.velocity.y = -5;
+			}
+		}
+	} else if (keys.a.pressed && lastPressedKey === 'a') {
+		for (let i = 0; i < boundaryBlocks.length; i++) {
+			const boundaryBlock = boundaryBlocks[i];
+			if (
+				isColliding(
+					{
+						...player,
+						velocity: {
+							x: -5,
+							y: 0,
+						},
+					},
+					boundaryBlock,
+				)
+			) {
+				player.velocity.x = 0;
+				break;
+			} else {
+				player.velocity.x = -5;
+			}
+		}
+	} else if (keys.s.pressed && lastPressedKey === 's') {
+		for (let i = 0; i < boundaryBlocks.length; i++) {
+			const boundaryBlock = boundaryBlocks[i];
+			if (
+				isColliding(
+					{
+						...player,
+						velocity: {
+							x: 0,
+							y: 5,
+						},
+					},
+					boundaryBlock,
+				)
+			) {
+				player.velocity.y = 0;
+				break;
+			} else {
+				player.velocity.y = 5;
+			}
+		}
+	} else if (keys.d.pressed && lastPressedKey === 'd') {
+		for (let i = 0; i < boundaryBlocks.length; i++) {
+			const boundaryBlock = boundaryBlocks[i];
+			if (
+				isColliding(
+					{
+						...player,
+						velocity: {
+							x: 5,
+							y: 0,
+						},
+					},
+					boundaryBlock,
+				)
+			) {
+				player.velocity.x = 0;
+				break;
+			} else {
+				player.velocity.x = 5;
+			}
+		}
+	}
+
 	boundaryBlocks.forEach((block) => {
 		block.draw();
+		// collusion detection
+		if (isColliding(player, block)) {
+			player.velocity.x = 0;
+			player.velocity.y = 0;
+		}
 	});
-	player.velocity.x = 0;
-	player.velocity.y = 0;
-	if (keys.w.pressed && lastPressedKey === 'w') {
-		player.velocity.y = -5;
-	} else if (keys.a.pressed && lastPressedKey === 'a') {
-		player.velocity.x = -5;
-	} else if (keys.s.pressed && lastPressedKey === 's') {
-		player.velocity.y = 5;
-	} else if (keys.d.pressed && lastPressedKey === 'd') {
-		player.velocity.x = 5;
-	}
 	player.update();
 }
+
 animate();
+
 addEventListener('keydown', ({ key }) => {
 	switch (key) {
 		case 'w':
