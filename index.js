@@ -45,7 +45,7 @@ class Player {
 - Only I, L, T, or + wall shapes are allowed, including the occasional rectangular wall.
 - Any non-rectangular wall pieces must only be 2 tiles thick.
 */
-const layout = [
+const layoutHalf = [
   ["1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1"],
   ["1", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", "1"],
   ["1", " ", "1", "1", "1", "1", " ", "1", "1", "1", "1", "1", " ", "1"],
@@ -78,6 +78,14 @@ const layout = [
   ["1", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " "],
   ["1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1"],
 ];
+
+const layout = layoutHalf.map((row) => {
+  const fullRow = row;
+  for (let i = row.length - 1; i >= 0; i--) {
+    fullRow.push(row[i]);
+  }
+  return fullRow;
+});
 
 const player = new Player({
   position: {
