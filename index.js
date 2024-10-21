@@ -1,3 +1,4 @@
+const scoreElement = document.getElementById("score");
 const canvas = document.getElementsByTagName("canvas")[0];
 canvas.width = innerWidth;
 canvas.height = innerHeight;
@@ -132,6 +133,8 @@ const keys = {
 let lastPressedKey = "*";
 const boundaryBlocks = [];
 const palletes = [];
+let score = 0;
+
 layout.forEach((row, rowIdx) => {
   row.forEach((column, columnIdx) => {
     if (column === "1") {
@@ -155,7 +158,7 @@ layout.forEach((row, rowIdx) => {
   console.log(rowIdx);
 });
 
-function isColliding(circle, boundaryBlock) {
+function isCollidingWithWall(circle, boundaryBlock) {
   return (
     circle.position.x + circle.radius + circle.velocity.x >= boundaryBlock.position.x &&
     circle.position.x - circle.radius + circle.velocity.x <= boundaryBlock.position.x + boundaryBlock.width &&
@@ -171,7 +174,7 @@ function animate() {
     for (let i = 0; i < boundaryBlocks.length; i++) {
       const boundaryBlock = boundaryBlocks[i];
       if (
-        isColliding(
+        isCollidingWithWall(
           {
             ...player,
             velocity: {
@@ -192,7 +195,7 @@ function animate() {
     for (let i = 0; i < boundaryBlocks.length; i++) {
       const boundaryBlock = boundaryBlocks[i];
       if (
-        isColliding(
+        isCollidingWithWall(
           {
             ...player,
             velocity: {
@@ -213,7 +216,7 @@ function animate() {
     for (let i = 0; i < boundaryBlocks.length; i++) {
       const boundaryBlock = boundaryBlocks[i];
       if (
-        isColliding(
+        isCollidingWithWall(
           {
             ...player,
             velocity: {
@@ -234,7 +237,7 @@ function animate() {
     for (let i = 0; i < boundaryBlocks.length; i++) {
       const boundaryBlock = boundaryBlocks[i];
       if (
-        isColliding(
+        isCollidingWithWall(
           {
             ...player,
             velocity: {
@@ -256,14 +259,22 @@ function animate() {
   boundaryBlocks.forEach((block) => {
     block.draw();
     // collusion detection
-    if (isColliding(player, block)) {
+    if (isCollidingWithWall(player, block)) {
       player.velocity.x = 0;
       player.velocity.y = 0;
     }
   });
-  palletes.forEach((pallete) => {
+
+  for (let i = palletes.length - 1; i >= 0; i--) {
+    const pallete = palletes[i];
     pallete.draw();
-  });
+    // ployer and pallete collusion detection
+    if (Math.hypot(pallete.position.x - player.position.x, pallete.position.y - player.position.y) <= Player.radius + Pallete.radius) {
+      palletes.splice(i, 1);
+      score += 10;
+      scoreElement.innerText = score;
+    }
+  }
   player.update();
 }
 
