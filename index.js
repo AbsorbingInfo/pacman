@@ -156,7 +156,6 @@ let lastPressedKey = "*";
 let score = 0;
 const boundaryBlocks = [];
 const palletes = [];
-const ghosts = [];
 
 layout.forEach((row, rowIdx) => {
   row.forEach((column, columnIdx) => {
@@ -178,7 +177,18 @@ layout.forEach((row, rowIdx) => {
       palletes.push(pallete);
     }
   });
-  console.log(rowIdx);
+});
+
+const ghostOne = new Ghost({
+  position: {
+    x: boundaryBlocks[boundaryBlocks.length - 1].position.x / 2,
+    y: boundaryBlocks[boundaryBlocks.length - 1].position.y / 2,
+  },
+  velocity: {
+    x: 0,
+    y: 0,
+  },
+  color: "red",
 });
 
 function isCollidingWithWall(circle, boundaryBlock) {
@@ -299,6 +309,7 @@ function animate() {
     }
   }
   player.update();
+  ghostOne.draw();
 }
 
 animate();
