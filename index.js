@@ -46,6 +46,7 @@ class Ghost {
     this.velocity = velocity;
     this.radius = 12;
     this.color = color;
+    this.prevCollusions = [];
   }
   draw() {
     c.beginPath();
@@ -179,17 +180,19 @@ layout.forEach((row, rowIdx) => {
   });
 });
 
-const ghostOne = new Ghost({
-  position: {
-    x: boundaryBlocks[boundaryBlocks.length - 1].position.x / 2,
-    y: boundaryBlocks[boundaryBlocks.length - 1].position.y / 2,
-  },
-  velocity: {
-    x: 0,
-    y: 0,
-  },
-  color: "red",
-});
+const ghosts = [
+  new Ghost({
+    position: {
+      x: boundaryBlocks[boundaryBlocks.length - 1].position.x / 2,
+      y: boundaryBlocks[boundaryBlocks.length - 1].position.y / 2,
+    },
+    velocity: {
+      x: 0,
+      y: 0,
+    },
+    color: "red",
+  }),
+];
 
 function isCollidingWithWall(circle, boundaryBlock) {
   return (
@@ -309,7 +312,73 @@ function animate() {
     }
   }
   player.update();
-  ghostOne.draw();
+
+  ghosts.forEach((ghost) => {
+    ghost.update();
+    const collusions = [];
+    boundaryBlocks.forEach((block) => {
+      if (
+        !collusions.includes("down") &&
+        isCollidingWithWall(
+          {
+            ...ghost,
+            velocity: {
+              x: 0,
+              y: 5,
+            },
+          },
+          block
+        )
+      ) {
+        collusions.push("down");
+      } else if (
+        !collusions.includes("right") &&
+        isCollidingWithWall(
+          {
+            ...ghost,
+            velocity: {
+              x: 5,
+              y: 0,
+            },
+          },
+          block
+        )
+      ) {
+        collusions.push("right");
+      } else if (
+        !collusions.includes("up") &&
+        isCollidingWithWall(
+          {
+            ...ghost,
+            velocity: {
+              x: 0,
+              y: -5,
+            },
+          },
+          block
+        )
+      ) {
+        collusions.push("up");
+      } else if (
+        !collusions.includes("left") &&
+        isCollidingWithWall(
+          {
+            ...ghost,
+            velocity: {
+              x: -5,
+              y: 0,
+            },
+          },
+          block
+        )
+      ) {
+        collusions.push("left");
+      }
+    });
+    if (collusions.length > ghost.prevCollusions.length) {
+      ghost.prevCollusions = collusions;
+    }
+  });
 }
 
 animate();
