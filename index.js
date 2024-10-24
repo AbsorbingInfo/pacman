@@ -375,8 +375,41 @@ function animate() {
         collusions.push("left");
       }
     });
+    console.log({ collusions, prev: ghost.prevCollusions });
     if (collusions.length > ghost.prevCollusions.length) {
       ghost.prevCollusions = collusions;
+    }
+    if (JSON.stringify(collusions) !== JSON.stringify(ghost.prevCollusions)) {
+      if (ghost.velocity.x > 0) {
+        ghost.prevCollusions.push("right");
+      } else if (ghost.velocity.x < 0) {
+        ghost.prevCollusions.push("left");
+      } else if (ghost.velocity.y > 0) {
+        ghost.prevCollusions.push("down");
+      } else if (ghost.velocity.y < 0) {
+        ghost.prevCollusions.push("up");
+      }
+      const pathways = ghost.prevCollusions.filter((collusion) => !collusions.includes(collusion));
+      const direction = pathways[Math.floor(Math.random() * pathways.length)];
+      console.log(pathways);
+      switch (direction) {
+        case "down":
+          ghost.velocity.y = 5;
+          ghost.velocity.x = 0;
+          break;
+        case "up":
+          ghost.velocity.y = -5;
+          ghost.velocity.x = 0;
+          break;
+        case "right":
+          ghost.velocity.y = 0;
+          ghost.velocity.x = 5;
+          break;
+        case "right":
+          ghost.velocity.y = 0;
+          ghost.velocity.x = -5;
+          break;
+      }
     }
   });
 }
