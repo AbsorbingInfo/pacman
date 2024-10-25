@@ -181,13 +181,24 @@ layout.forEach((row, rowIdx) => {
 });
 
 const ghosts = [
+  // new Ghost({
+  //   position: {
+  //     x: boundaryBlocks[boundaryBlocks.length - 1].position.x / 2,
+  //     y: boundaryBlocks[boundaryBlocks.length - 1].position.y / 2,
+  //   },
+  //   velocity: {
+  //     x: 1,
+  //     y: 0,
+  //   },
+  //   color: "red",
+  // }),
   new Ghost({
     position: {
-      x: boundaryBlocks[boundaryBlocks.length - 1].position.x / 2,
-      y: boundaryBlocks[boundaryBlocks.length - 1].position.y / 2,
+      x: player.position.x,
+      y: player.position.y,
     },
     velocity: {
-      x: 0,
+      x: 1,
       y: 0,
     },
     color: "red",
@@ -324,7 +335,7 @@ function animate() {
             ...ghost,
             velocity: {
               x: 0,
-              y: 5,
+              y: 1,
             },
           },
           block
@@ -337,7 +348,7 @@ function animate() {
           {
             ...ghost,
             velocity: {
-              x: 5,
+              x: 1,
               y: 0,
             },
           },
@@ -352,7 +363,7 @@ function animate() {
             ...ghost,
             velocity: {
               x: 0,
-              y: -5,
+              y: -1,
             },
           },
           block
@@ -365,7 +376,7 @@ function animate() {
           {
             ...ghost,
             velocity: {
-              x: -5,
+              x: -1,
               y: 0,
             },
           },
@@ -375,7 +386,6 @@ function animate() {
         collusions.push("left");
       }
     });
-    console.log({ collusions, prev: ghost.prevCollusions });
     if (collusions.length > ghost.prevCollusions.length) {
       ghost.prevCollusions = collusions;
     }
@@ -391,25 +401,25 @@ function animate() {
       }
       const pathways = ghost.prevCollusions.filter((collusion) => !collusions.includes(collusion));
       const direction = pathways[Math.floor(Math.random() * pathways.length)];
-      console.log(pathways);
       switch (direction) {
         case "down":
-          ghost.velocity.y = 5;
+          ghost.velocity.y = 1;
           ghost.velocity.x = 0;
           break;
         case "up":
-          ghost.velocity.y = -5;
+          ghost.velocity.y = -1;
           ghost.velocity.x = 0;
           break;
         case "right":
           ghost.velocity.y = 0;
-          ghost.velocity.x = 5;
+          ghost.velocity.x = 1;
           break;
         case "right":
           ghost.velocity.y = 0;
-          ghost.velocity.x = -5;
+          ghost.velocity.x = -1;
           break;
       }
+      ghost.prevCollusions = [];
     }
   });
 }
